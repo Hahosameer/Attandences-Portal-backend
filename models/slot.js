@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const slotSchema = new mongoose.Schema(
+const SlotSchema = new mongoose.Schema(
   {
     CourseName: {
       type: String,

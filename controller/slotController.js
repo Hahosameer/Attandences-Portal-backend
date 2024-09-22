@@ -5,7 +5,13 @@ import Teacher from "../models/Teacher.js";
 // import Slot from "../models/Slot.js";
 import Batch from "../models/Batch.js";
 import Slot from "../models/Slot.js";
+import { dirname } from "path";
+import { fileURLToPath } from "url";
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+console.log(__dirname);
 const { verify, decode, sign } = pkg;``
 
 // export const add = async (req, res) => {
