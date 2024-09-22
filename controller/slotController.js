@@ -2,8 +2,9 @@ import { sendError, sendSuccess } from "../utils/responses.js";
 import { INTERNALERROR, NOTFOUND, OK } from "../constants/httpStatus.js";
 import pkg from "jsonwebtoken";
 import Teacher from "../models/Teacher.js";
-import Slot from "../models/Slot.js";
+// import Slot from "../models/Slot.js";
 import Batch from "../models/Batch.js";
+import Slot from "../models/Slot.js";
 
 const { verify, decode, sign } = pkg;``
 
