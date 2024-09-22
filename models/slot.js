@@ -53,3 +53,4 @@ const slotSchema = new mongoose.Schema(
 );
 
 export default mongoose.model("Slot", slotSchema);
+
