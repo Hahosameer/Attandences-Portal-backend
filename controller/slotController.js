@@ -2,11 +2,10 @@ import { sendError, sendSuccess } from "../utils/responses.js";
 import { INTERNALERROR, NOTFOUND, OK } from "../constants/httpStatus.js";
 import pkg from "jsonwebtoken";
 import Teacher from "../models/Teacher.js";
-// import Slot from "../models/Slot.js";
 import Batch from "../models/Batch.js";
-import Slot from "../models/Slot.js";
 import { dirname } from "path";
 import { fileURLToPath } from "url";
+import Slot from "../models/Slot.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
