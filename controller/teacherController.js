@@ -9,7 +9,7 @@ import {
   OK,
 } from "../constants/httpStatus.js";
 import { responseMessages } from "../constants/responseMessages.js";
-import Slot from "../models/Slot.js";
+import Slot from "../models/slot.js";
 import Teacher from "../models/Teacher.js";
 import Course from "../models/Course.js";
 import pkg from "jsonwebtoken";

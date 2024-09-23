@@ -5,7 +5,7 @@ import Teacher from "../models/Teacher.js";
 import Batch from "../models/Batch.js";
 import { dirname } from "path";
 import { fileURLToPath } from "url";
-import Slot from "../models/Slot.js";
+import Slot from "../models/slot.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);

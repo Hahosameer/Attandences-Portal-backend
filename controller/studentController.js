@@ -13,7 +13,7 @@ import Course from "../models/Course.js";
 import pkg from "jsonwebtoken";
 import Student from "../models/Student.js";
 import Batch from "../models/Batch.js";
-import Slot from "../models/Slot.js";
+import Slot from "../models/slot.js";
 
 const { verify, decode, sign } = pkg;
 

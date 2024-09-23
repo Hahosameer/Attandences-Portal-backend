@@ -1,9 +1,11 @@
 import Student from "../models/Student.js";
-import Slot from "../models/Slot.js";
+// import Slot from "../models/Slot.js";
 import Batch from "../models/Batch.js";
 import Attendance from "../models/Attendance.js";
 import moment from "moment";
 import Holiday from "../models/Holiday.js";
+import Slot from "../models/slot.js";
+// import Slot from "../models/slot.js";
 
 // mark attendance
 export const markAttendance = async (req, res) => {
