@@ -16,26 +16,20 @@ import { markAbsentStudents } from "./controller/attendanceController.js";
 const app = express();
 
 dotenv.config();
-// app.use(
-//   cors({
-//     origin: "*",
-//     methods: ["GET", "POST", "PUT", "DELETE"],
-//     credentials: true,
-//     allowedHeaders: ["Content-Type", "Authorization"],
-//   })
-// );
-
-// // mark absent at 12:55 pm daily
-// // mark absent at 12:55 pm daily
 cron.schedule("55 23 * * *", markAbsentStudents);
 
 connectDB();
 app.use(express.json());
 
-app.use(cors({
-  origin: "http://localhost:5173",
-  credentials: true
-}));
+app.use(
+  cors({
+    origin: [
+      "http://localhost:5173",
+      "https://attandences-portal-frontend.vercel.app",
+    ],
+    credentials: true,
+  })
+);
 
 // routes
 app.use("/api/course", courseRoutes);
@@ -46,7 +40,6 @@ app.use("/api/slot", slotRoutes);
 app.use("/api/student", studentRoutes);
 app.use("/api/holiday", holidayRoutes);
 app.use("/api/attendance", attendanceRoutes);
-
 
 app.get("/", (req, res) => {
   res.json({ message: "deploy backend successful" });
@@ -61,6 +54,7 @@ app.use((err, req, res, next) => {
     message,
   });
 });
+
 app.listen(process.env.PORT, () => {
   console.log(`Server is Running at http://localhost:${process.env.PORT}`);
 });
