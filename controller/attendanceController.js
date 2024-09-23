@@ -3,8 +3,10 @@ import Student from "../models/Student.js";
 import Batch from "../models/Batch.js";
 import Attendance from "../models/Attendance.js";
 import moment from "moment";
-import Holiday from "../models/Holiday.js";
+// import Holiday from "../models/Holiday.js";
 import Slot from "../models/slot.js";
+import Holiday from "../models/holiDay.js";
+// import Holiday from "../models/holiDay.js";
 // import Slot from "../models/slot.js";
 
 // mark attendance

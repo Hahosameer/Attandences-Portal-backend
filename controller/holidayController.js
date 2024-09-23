@@ -1,4 +1,4 @@
-import Holiday from "../models/Holiday.js";
+import Holiday from "../models/holiDay.js";
 
 // add
 export const add = async (req, res) => {
