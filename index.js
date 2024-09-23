@@ -47,6 +47,20 @@ app.use("/api/student", studentRoutes);
 app.use("/api/holiday", holidayRoutes);
 app.use("/api/attendance", attendanceRoutes);
 
+
+app.get("/", (req, res) => {
+  res.json({ message: "deploy backend successful" });
+});
+
+app.use((err, req, res, next) => {
+  const status = err.status || 500;
+  const message = err.message || "something went wrong";
+  return res.status(status).json({
+    success: false,
+    status,
+    message,
+  });
+});
 app.listen(process.env.PORT, () => {
   console.log(`Server is Running at http://localhost:${process.env.PORT}`);
 });
