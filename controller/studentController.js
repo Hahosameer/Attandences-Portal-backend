@@ -17,6 +17,154 @@ import Slot from "../models/slot.js";
 
 const { verify, decode, sign } = pkg;
 
+// export const add = async (req, res) => {
+//   const {
+//     fullName,
+//     email,
+//     fatherEmail,
+//     phoneNumber,
+//     courseName,
+//     batchNumber,
+//     slotId,
+//     rollNumber,
+//     profilePicture,
+//   } = req.body;
+
+//   try {
+//     if (
+//       !fullName ||
+//       !email ||
+//       !fatherEmail ||
+//       !phoneNumber ||
+//       !courseName ||
+//       !batchNumber ||
+//       !slotId ||
+//       !rollNumber ||
+//       !profilePicture
+//     ) {
+//       return res
+//         .status(BADREQUEST)
+//         .send(
+//           sendError({ status: false, message: responseMessages.MISSING_FIELDS })
+//         );
+//     }
+
+//     const checkEmail = await Student.findOne({ Email: email });
+//     if (checkEmail) {
+//       return res
+//         .status(ALREADYEXISTS)
+//         .send(
+//           sendError({ status: false, message: responseMessages.EMAIL_EXISTS })
+//         );
+//     }
+
+//     const checkFatherEmail = await Student.findOne({
+//       FatherEmail: fatherEmail,
+//     });
+//     if (checkFatherEmail) {
+//       return res.status(ALREADYEXISTS).send(
+//         sendError({
+//           status: false,
+//           message: responseMessages.FATHER_EMAIL_EXISTS,
+//         })
+//       );
+//     }
+
+//     const checkCourse = await Course.findOne({ CourseName: courseName });
+//     if (!checkCourse) {
+//       return res
+//         .status(BADREQUEST)
+//         .send(
+//           sendError({ status: false, message: responseMessages.INVALID_COURSE })
+//         );
+//     }
+
+//     const checkPhoneNumber = await Student.findOne({
+//       PhoneNumber: phoneNumber,
+//     });
+//     if (checkPhoneNumber) {
+//       return res
+//         .status(ALREADYEXISTS)
+//         .send(
+//           sendError({ status: false, message: responseMessages.PHONE_EXISTS })
+//         );
+//     }
+
+//     const checkBatch = await Batch.findOne({
+//       CourseName: courseName,
+//       BatchNumber: batchNumber,
+//     });
+//     if (!checkBatch) {
+//       return res
+//         .status(BADREQUEST)
+//         .send(
+//           sendError({ status: false, message: responseMessages.INVALID_BATCH })
+//         );
+//     }
+
+//     const checkExpiry = new Date(checkBatch.EndDate);
+//     if (checkExpiry < new Date()) {
+//       return res
+//         .status(BADREQUEST)
+//         .send(
+//           sendError({ status: false, message: responseMessages.EXPIRED_BATCH })
+//         );
+//     }
+
+//     const checkSlot = await Slot.findOne({ SlotId: slotId });
+//     if (!checkSlot || checkSlot.CourseName !== courseName) {
+//       return res
+//         .status(BADREQUEST)
+//         .send(
+//           sendError({ status: false, message: responseMessages.INVALID_SLOT })
+//         );
+//     }
+
+//     const checkRollNumber = await Student.findOne({ RollNumber: rollNumber });
+//     if (checkRollNumber) {
+//       return res.status(BADREQUEST).send(
+//         sendError({
+//           status: false,
+//           message: responseMessages.ROLL_NUMBER_EXISTS,
+//         })
+//       );
+//     }
+
+//     const student = new Student({
+//       FullName: fullName,
+//       Email: email,
+//       FatherEmail: fatherEmail,
+//       PhoneNumber: phoneNumber,
+//       CourseName: courseName,
+//       BatchNumber: batchNumber,
+//       SlotId: slotId,
+//       RollNumber: rollNumber,
+//       ProfilePicture: profilePicture,
+//     });
+
+//     const data = await student.save();
+
+//     await Slot.findOneAndUpdate(
+//       { SlotId: slotId },
+//       { $push: { StudentsId: data._id } },
+//       { new: true }
+//     );
+
+//     res.status(CREATED).json({
+//       status: true,
+//       message: responseMessages.STUDENT_ADDED,
+//       data: data,
+//     });
+//   } catch (error) {
+//     console.error(error);
+//     return res.status(INTERNALERROR).send(
+//       sendError({
+//         status: false,
+//         message: error.message,
+//       })
+//     );
+//   }
+// };
 export const add = async (req, res) => {
   const {
     fullName,
@@ -31,104 +179,32 @@ export const add = async (req, res) => {
   } = req.body;
 
   try {
-    if (
-      !fullName ||
-      !email ||
-      !fatherEmail ||
-      !phoneNumber ||
-      !courseName ||
-      !batchNumber ||
-      !slotId ||
-      !rollNumber ||
-      !profilePicture
-    ) {
-      return res
-        .status(BADREQUEST)
-        .send(
-          sendError({ status: false, message: responseMessages.MISSING_FIELDS })
-        );
+    // Basic Field Check
+    if (!fullName || !email || !fatherEmail || !phoneNumber || !courseName || !batchNumber || !slotId || !rollNumber || !profilePicture) {
+      return res.status(BADREQUEST).send(sendError({ status: false, message: responseMessages.MISSING_FIELDS }));
     }
 
+    // Email Check
     const checkEmail = await Student.findOne({ Email: email });
-    if (checkEmail) {
-      return res
-        .status(ALREADYEXISTS)
-        .send(
-          sendError({ status: false, message: responseMessages.EMAIL_EXISTS })
-        );
-    }
+    if (checkEmail) return res.status(ALREADYEXISTS).send(sendError({ status: false, message: responseMessages.EMAIL_EXISTS }));
 
-    const checkFatherEmail = await Student.findOne({
-      FatherEmail: fatherEmail,
-    });
-    if (checkFatherEmail) {
-      return res.status(ALREADYEXISTS).send(
-        sendError({
-          status: false,
-          message: responseMessages.FATHER_EMAIL_EXISTS,
-        })
-      );
-    }
-
+    // Course Check
     const checkCourse = await Course.findOne({ CourseName: courseName });
-    if (!checkCourse) {
-      return res
-        .status(BADREQUEST)
-        .send(
-          sendError({ status: false, message: responseMessages.INVALID_COURSE })
-        );
-    }
+    if (!checkCourse) return res.status(BADREQUEST).send(sendError({ status: false, message: responseMessages.INVALID_COURSE }));
 
-    const checkPhoneNumber = await Student.findOne({
-      PhoneNumber: phoneNumber,
-    });
-    if (checkPhoneNumber) {
-      return res
-        .status(ALREADYEXISTS)
-        .send(
-          sendError({ status: false, message: responseMessages.PHONE_EXISTS })
-        );
-    }
+    // Batch Check
+    const checkBatch = await Batch.findOne({ CourseName: courseName, BatchNumber: batchNumber });
+    if (!checkBatch) return res.status(BADREQUEST).send(sendError({ status: false, message: responseMessages.INVALID_BATCH }));
 
-    const checkBatch = await Batch.findOne({
-      CourseName: courseName,
-      BatchNumber: batchNumber,
-    });
-    if (!checkBatch) {
-      return res
-        .status(BADREQUEST)
-        .send(
-          sendError({ status: false, message: responseMessages.INVALID_BATCH })
-        );
-    }
-
-    const checkExpiry = new Date(checkBatch.EndDate);
-    if (checkExpiry < new Date()) {
-      return res
-        .status(BADREQUEST)
-        .send(
-          sendError({ status: false, message: responseMessages.EXPIRED_BATCH })
-        );
-    }
-
+    // Slot Check
     const checkSlot = await Slot.findOne({ SlotId: slotId });
     if (!checkSlot || checkSlot.CourseName !== courseName) {
-      return res
-        .status(BADREQUEST)
-        .send(
-          sendError({ status: false, message: responseMessages.INVALID_SLOT })
-        );
+      return res.status(BADREQUEST).send(sendError({ status: false, message: responseMessages.INVALID_SLOT }));
     }
 
+    // Roll Number Check
     const checkRollNumber = await Student.findOne({ RollNumber: rollNumber });
-    if (checkRollNumber) {
-      return res.status(BADREQUEST).send(
-        sendError({
-          status: false,
-          message: responseMessages.ROLL_NUMBER_EXISTS,
-        })
-      );
-    }
+    if (checkRollNumber) return res.status(BADREQUEST).send(sendError({ status: false, message: responseMessages.ROLL_NUMBER_EXISTS }));
 
     const student = new Student({
       FullName: fullName,
@@ -144,6 +220,7 @@ export const add = async (req, res) => {
 
     const data = await student.save();
 
+    // Update Slot with Student ID
     await Slot.findOneAndUpdate(
       { SlotId: slotId },
       { $push: { StudentsId: data._id } },
@@ -156,13 +233,8 @@ export const add = async (req, res) => {
       data: data,
     });
   } catch (error) {
-    console.error(error);
-    return res.status(INTERNALERROR).send(
-      sendError({
-        status: false,
-        message: error.message,
-      })
-    );
+    console.error("Backend Error:", error);
+    return res.status(INTERNALERROR).send(sendError({ status: false, message: error.message }));
   }
 };
 

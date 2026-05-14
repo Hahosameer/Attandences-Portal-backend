@@ -165,46 +165,63 @@ export const add = async (req, res) => {
   } = req.body;
 
   try {
-    if (
-      !courseName ||
-      !batchNumber ||
-      !startTime ||
-      !endTime ||
-      !days ||
-      !teacherId ||
-      !slotId
-    ) {
+    // 1. Basic Validation
+    if (!courseName || !batchNumber || !startTime || !endTime || !days || !teacherId || !slotId) {
       return res.status(400).json({ error: "Missing required fields" });
     }
 
-    const existingSlot = await Slot.findOne({ SlotId: slotId });
-    if (existingSlot)
+    // 2. Check if SlotId already exists
+    const existingSlotId = await Slot.findOne({ SlotId: slotId });
+    if (existingSlotId) {
       return res.status(400).json({ error: "SlotId already exists" });
-
-    const batch = await Batch.findOne({
-      CourseName: courseName,
-      BatchNumber: batchNumber,
-    });
-    if (!batch) return res.status(404).json({ error: "Batch not found" });
-
-    const teacher = await Teacher.findOne({ TeacherId: parseInt(teacherId) });
-    if (!teacher || teacher.TeacherOf !== courseName) {
-      return res
-        .status(403)
-        .json({ error: "Invalid teacher or not assigned to this course" });
     }
 
-    // Further checks for existing time slots...
+    // 3. Find Teacher and Validate Course (The 403 Fix)
+    const teacher = await Teacher.findOne({ TeacherId: parseInt(teacherId) });
+    
+    // Trim aur Case-insensitive check taaki mismatch na ho
+    if (!teacher || teacher.TeacherOf.trim().toLowerCase() !== courseName.trim().toLowerCase()) {
+      return res.status(403).json({ 
+        error: `Teacher not found or not assigned to ${courseName}. Teacher is assigned to: ${teacher ? teacher.TeacherOf : 'Nothing'}` 
+      });
+    }
 
+    // 4. Find Batch
+    const batch = await Batch.findOne({ CourseName: courseName, BatchNumber: batchNumber });
+    if (!batch) {
+      return res.status(404).json({ error: "Batch not found" });
+    }
+
+    // 5. Create New Slot
     const newSlot = new Slot({
-      /* slot data */
+      CourseName: courseName,
+      BatchNumber: batchNumber,
+      StartTime: startTime,
+      EndTime: endTime,
+      Days: days, // Frontend sends array
+      TeacherId: parseInt(teacherId),
+      SlotId: slotId,
     });
-    const savedSlot = await newSlot.save();
-    // Update Teacher and Batch...
 
-    return res
-      .status(201)
-      .json({ message: "Slot added successfully", data: savedSlot });
+    const savedSlot = await newSlot.save();
+
+    // 6. Update Teacher's Slots array
+    await Teacher.findOneAndUpdate(
+      { TeacherId: parseInt(teacherId) },
+      { $push: { Slots: savedSlot._id } }
+    );
+
+    // 7. Update Batch's Slots array
+    await Batch.findOneAndUpdate(
+      { CourseName: courseName, BatchNumber: batchNumber },
+      { $push: { Slots: savedSlot._id } }
+    );
+
+    return res.status(201).json({ 
+      message: "Slot added successfully", 
+      data: savedSlot 
+    });
+
   } catch (error) {
     console.error("Error adding slot:", error);
     return res.status(500).json({ error: "Internal Server Error" });

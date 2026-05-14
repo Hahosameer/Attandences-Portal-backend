@@ -25,7 +25,7 @@ export const signUp = async (req, res) => {
   console.log(req.body, "===>>> req.body");
 
   try {
-    const { email, password } = req.body;
+const { email, password, role } = req.body;
 
 
     if (!email || !password) {
@@ -38,7 +38,7 @@ export const signUp = async (req, res) => {
     }
 
     const user = await User.findOne({ Email: email });
-    console.log(user, "====>> already email exists");
+    console.log(user, "user");
 
     if (user) {
       return res
@@ -78,6 +78,7 @@ export const signUp = async (req, res) => {
         doc = new User({
           Email: email,
           Password: hashSync(password, salt),
+            Role: role,
         });
         //otp
         const otp = uuidv4().slice(0, 6);
